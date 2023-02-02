@@ -5,7 +5,7 @@ import org.mindrot.jbcrypt.BCrypt
 
 @Serializable
 class UserCredentials(val username:String,
-                      private val password:String){
+                       val password:String){
 
     fun hashPassword(): String = BCrypt.hashpw(this.password,BCrypt.gensalt())
 
