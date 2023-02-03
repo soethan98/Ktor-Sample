@@ -6,6 +6,8 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.contentnegotiation.*
 import org.ktorm.database.Database
 import org.ktorm.dsl.from
@@ -18,6 +20,11 @@ fun main(args: Array<String>): Unit =
 
 
 fun Application.module() {
+    install(Authentication){
+        jwt {
+
+        }
+    }
 
     install(ContentNegotiation){
         json()

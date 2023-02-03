@@ -33,4 +33,6 @@ dependencies {
     implementation("org.ktorm:ktorm-core:$ktorm_version")
     implementation("com.mysql:mysql-connector-j:8.0.32")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 }
