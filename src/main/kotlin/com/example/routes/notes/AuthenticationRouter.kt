@@ -5,8 +5,13 @@ import com.example.entities.UserEntity
 import com.example.models.NotesResponse
 import com.example.models.User
 import com.example.models.UserCredentials
+import com.example.utils.TokenManager
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -14,6 +19,8 @@ import org.ktorm.dsl.*
 import org.mindrot.jbcrypt.BCrypt
 
 fun Application.authenticationRoutes() {
+    val tokenManager = TokenManager(HoconApplicationConfig(ConfigFactory.load()))
+
     routing {
         post("/register") {
             val userCredentials = call.receive<UserCredentials>()
@@ -100,10 +107,24 @@ fun Application.authenticationRoutes() {
                     NotesResponse(success = false, data = "Invalid username or password."))
                 return@post
             }
+            val token = tokenManager.generateJWTToken(user)
             call.respond(HttpStatusCode.OK,NotesResponse(success = true,
-                data = "User successfully logged in."))
+                data = token))
 
 
+        }
+
+        authenticate {
+            /**
+             * Protected route that returns the logged in users information.
+             */
+            get("/me") {
+                val principle = call.principal<JWTPrincipal>()
+                val username = principle!!.payload.getClaim("username").asString()
+                val userId = principle!!.payload.getClaim("userId").asInt()
+                call.respondText("Hello, $username with id: $userId")
+
+            }
         }
     }
 }
